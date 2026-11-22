@@ -73,7 +73,13 @@ COLUMNS = ["order_id", "sku", "date", "channel", "listing_name", "qty", "total",
 
 
 def db_path() -> Path:
-    return Path(os.environ.get("DB_PATH") or DEFAULT_PATH)
+    if os.environ.get("DB_PATH"):
+        return Path(os.environ["DB_PATH"])
+    if os.environ.get("VERCEL"):
+        # Serverless without DATABASE_URL: /tmp is the only writable place. Data lasts while the
+        # instance is warm, which is enough to try the app; set DATABASE_URL for permanent data.
+        return Path("/tmp/biota.db")
+    return DEFAULT_PATH
 
 
 def database_url() -> str:
