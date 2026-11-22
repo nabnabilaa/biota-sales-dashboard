@@ -1,0 +1,14 @@
+# Order data is confidential: never commit it.
+data/*.csv
+node_modules/
+.vercel/
+storage/
+.env
+tests/dummy_out/
+
+# local backups
+*.backup-*.db
+
+# Python
+__pycache__/
+.pytest_cache/

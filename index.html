@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Penjualan Marketplace</title>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <h1 class="title"><span class="hide-sm">Dashboard </span>Penjualan Marketplace</h1>
+      <div id="data-info" class="file-info" hidden>
+        <span class="file-name"><i class="ph ph-database" aria-hidden="true"></i><span id="data-range"></span></span>
+        <label class="btn">
+          <input class="file-input" type="file" accept=".csv,.xlsx,.xls">
+          <i class="ph ph-upload-simple" aria-hidden="true"></i><span class="btn-text">Upload data baru</span>
+        </label>
+      </div>
+    </div>
+    <div id="filter-bar" class="subbar" hidden>
+      <div class="wrap filter">
+        <span class="filter-label">Periode</span>
+        <div class="presets" role="group" aria-label="Pilih periode">
+          <button type="button" class="chip" data-preset="all"></button>
+          <button type="button" class="chip" data-preset="first"></button>
+          <button type="button" class="chip" data-preset="second"></button>
+        </div>
+        <div class="range">
+          <label class="sr-only" for="start-date">Dari tanggal</label>
+          <input id="start-date" type="date">
+          <span class="muted">s/d</span>
+          <label class="sr-only" for="end-date">Sampai tanggal</label>
+          <input id="end-date" type="date">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap main">
+    <!-- Loading the stored data -->
+    <section id="loading" class="loading-state"><span class="spinner" aria-hidden="true"></span>Memuat data…</section>
+
+    <!-- Team password -->
+    <section id="login" class="card start" hidden>
+      <i class="ph ph-lock-simple drop-icon" aria-hidden="true"></i>
+      <h2>Masuk</h2>
+      <p class="muted">Data penjualan ini hanya untuk tim. Masukkan kata sandi tim.</p>
+      <form id="login-form" class="login-form">
+        <label class="sr-only" for="password">Kata sandi tim</label>
+        <input id="password" name="password" type="password" placeholder="Kata sandi tim" autocomplete="current-password" required>
+        <button type="submit" class="btn">Masuk</button>
+      </form>
+      <p id="login-error" class="alert" role="alert" hidden></p>
+    </section>
+
+    <!-- First upload -->
+    <section id="start" class="card start" hidden>
+      <h2>Upload data pesanan</h2>
+      <p class="muted">File ekspor pesanan Shopee, TikTok Shop dan Tokopedia (CSV atau Excel). Upload berikutnya, misalnya tiap minggu, akan digabung dengan data yang sudah ada.</p>
+      <label id="drop" class="drop">
+        <input class="file-input" type="file" accept=".csv,.xlsx,.xls">
+        <i class="ph ph-upload-simple drop-icon" aria-hidden="true"></i>
+        <span class="drop-title">Klik untuk memilih file</span>
+        <span class="muted small">atau tarik file ke sini · CSV / XLSX · maks. 4 MB</span>
+      </label>
+      <p id="error" class="alert" role="alert" hidden></p>
+    </section>
+
+    <!-- Unknown columns or labels: the user confirms what they mean (asked once, then remembered) -->
+    <section id="mapping" class="card" hidden>
+      <h2>Ada yang belum dikenali di file ini</h2>
+      <p class="muted">Pilih arti setiap kolom atau label di bawah. Jawaban ini disimpan, jadi tidak akan ditanyakan lagi di upload berikutnya. <span id="mapping-ai"></span></p>
+      <form id="mapping-form" class="mapping-form"></form>
+      <div class="mapping-actions">
+        <button id="mapping-cancel" type="button" class="btn btn-outline">Batal</button>
+        <button id="mapping-submit" type="submit" form="mapping-form" class="btn">Simpan dan lanjutkan</button>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
+    <div id="dash" hidden>
+      <div id="content" class="content" aria-live="polite">
+        <section class="kpis">
+          <div class="card kpi">
+            <span class="kpi-label">Net revenue</span>
+            <strong id="kpi-revenue" class="kpi-value"></strong>
+            <span class="kpi-note">Pesanan selesai + sedang dikirim</span>
+          </div>
+          <div class="card kpi">
+            <span class="kpi-label">Pesanan</span>
+            <strong id="kpi-orders" class="kpi-value"></strong>
+            <span class="kpi-note">Yang dihitung ke net revenue</span>
+          </div>
+          <div class="card kpi">
+            <span class="kpi-label">Unit terjual</span>
+            <strong id="kpi-units" class="kpi-value"></strong>
+            <span class="kpi-note">Dari pesanan yang dihitung</span>
+          </div>
+          <div class="card kpi">
+            <span class="kpi-label">Batal / retur</span>
+            <strong id="kpi-excluded" class="kpi-value"></strong>
+            <span id="kpi-excluded-note" class="kpi-note"></span>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Temuan yang perlu ditindaklanjuti</h2>
+          <div id="findings" class="findings"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <h2>Net revenue per hari</h2>
+            <div class="legend small muted">
+              <span><i class="lg-bar"></i>Net revenue</span>
+              <span><i class="lg-avg"></i>Rata-rata</span>
+              <span><i class="lg-best"></i>Hari tertinggi</span>
+            </div>
+          </div>
+          <p class="hint"><span class="hide-sm">Arahkan kursor untuk melihat angka, klik hari untuk melihat detail</span><span class="show-sm">Ketuk batang untuk melihat detail hari itu</span></p>
+          <div class="chart">
+            <div id="chart-y" class="chart-y" aria-hidden="true"></div>
+            <div class="chart-plot">
+              <div id="chart-grid" class="chart-grid" aria-hidden="true"></div>
+              <div id="chart-avg" class="chart-avg" aria-hidden="true"><span></span></div>
+              <div id="daily" class="daily" role="list"></div>
+              <div id="chart-x" class="chart-x small muted" aria-hidden="true"></div>
+              <div id="tooltip" class="tooltip" hidden></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="grid-2">
+          <section class="card">
+            <h2>Net revenue per channel</h2>
+            <p class="hint">Klik channel untuk melihat detail</p>
+            <div id="channels" class="channels"></div>
+          </section>
+          <section class="card notes">
+            <h2>Data dan upload</h2>
+            <ul id="notes" class="notes-list"></ul>
+            <h3 class="sub-h">Riwayat upload</h3>
+            <ul id="uploads" class="uploads"></ul>
+            <button id="clear-data" type="button" class="btn-link danger-link">Hapus semua data</button>
+          </section>
+        </div>
+
+        <section class="card">
+          <div class="card-head">
+            <h2>Net revenue per produk</h2>
+            <div class="tabs" role="group" aria-label="Tampilan produk">
+              <button type="button" class="chip" data-view="top" aria-pressed="true">10 teratas</button>
+              <button type="button" class="chip" data-view="all" aria-pressed="false">Semua produk</button>
+            </div>
+          </div>
+          <p class="hint">Klik produk untuk melihat detail</p>
+          <div id="product-tools" class="product-tools" hidden>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" class="col-no">No</th>
+                  <th scope="col">Produk</th>
+                  <th scope="col" class="num">Unit terjual</th>
+                  <th scope="col" class="num">Net revenue</th>
+                  <th scope="col" class="col-bar"><span class="sr-only">Grafik</span></th>
+                </tr>
+              </thead>
+              <tbody id="product-rows"></tbody>
+            </table>
+          </div>
+          <nav id="pager" class="pager" aria-label="Halaman produk" hidden></nav>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="drop-overlay" class="drop-overlay" hidden><p>Lepaskan file di sini</p></div>
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <!-- Detail of one product, channel or day -->
+  <dialog id="sheet" class="sheet" aria-labelledby="sheet-title">
+    <div class="sheet-inner">
+      <header class="sheet-head">
+        <button id="sheet-back" type="button" class="icon-btn" aria-label="Kembali" hidden><i class="ph ph-caret-left"></i></button>
+        <div class="sheet-heading">
+          <p id="sheet-kicker" class="sheet-kicker"></p>
+          <h2 id="sheet-title"></h2>
+          <p id="sheet-sub" class="muted small"></p>
+        </div>
+        <button id="sheet-close" type="button" class="icon-btn" aria-label="Tutup"><i class="ph ph-x"></i></button>
+      </header>
+      <div id="sheet-body" class="sheet-body"></div>
+    </div>
+  </dialog>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>

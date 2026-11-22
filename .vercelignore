@@ -1,0 +1,7 @@
+# Never upload order data, local databases or secrets.
+data/
+storage/
+.env
+tests/
+prompt-log/
+*.db
