@@ -16,7 +16,7 @@ Susunannya mengikuti dashboard Seller Centre yang dipakai tim setiap hari, supay
 
 ## Cara mencoba
 
-- **Link live:** _(diisi setelah deploy)_ &middot; kata sandi tim: **0987**
+- **Link live:** https://biota-sales-dashboard.vercel.app &middot; kata sandi tim: **0987**
 - **Video penjelasan (2,5 menit):** _(link)_
 - Upload `biota_orders_oct2026.csv`, lalu coba filter tanggal 1-15 Oktober, klik angka atau produk mana pun sampai ke daftar pesanannya, dan upload file yang sama sekali lagi: tidak ada yang dihitung dua kali.
 
