@@ -12,3 +12,5 @@ tests/dummy_out/
 # Python
 __pycache__/
 .pytest_cache/
+
+.vercel
