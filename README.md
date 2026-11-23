@@ -56,7 +56,7 @@ Pengaturan (opsional): salin `.env.example` menjadi `.env` lalu isi, atau pakai 
 | `DATABASE_URL` | Alamat Postgres (mis. Supabase). Jika diisi, data disimpan di sana, bukan di SQLite. Dipakai untuk link live |
 | `GEMINI_API_KEY` | Mengaktifkan saran AI untuk kolom/label yang tidak dikenal (tier gratis cukup) |
 
-Link live berjalan di **Vercel** (halaman + API Python sebagai serverless function) dengan data di **Supabase Postgres**, karena serverless tidak punya disk yang permanen. Kodenya sama persis; hanya `DATABASE_URL` yang berbeda.
+Link live berjalan di **Vercel** (halaman + API Python sebagai serverless function). Serverless tidak punya disk permanen, jadi di link live data yang diupload hanya tersimpan sementara (cukup untuk mencoba: upload CSV, lihat hasilnya). Untuk pemakaian sungguhan, isi `DATABASE_URL` dengan Postgres (mis. Supabase); kodenya sudah mendukung dan tidak perlu diubah.
 
 Test:
 
