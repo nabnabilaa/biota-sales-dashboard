@@ -192,4 +192,4 @@ vercel.json             pengaturan deploy Vercel
 
 ## Log prompt
 
-Log prompt lengkap dikirim terpisah lewat email, tidak disimpan di repository ini.
+Lihat [`prompt-log/03-log.txt`](prompt-log/03-log.txt).
