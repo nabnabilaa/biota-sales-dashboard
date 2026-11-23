@@ -192,7 +192,4 @@ vercel.json             pengaturan deploy Vercel
 
 ## Log prompt
 
-Lihat `prompt-log/`:
-
-- `01-log-asli.txt`: ekspor apa adanya dari `/export` di Claude Code. Satu-satunya perubahan: API key yang sempat tertulis di percakapan diganti `[disamarkan]`.
-- `02-prompt-best-practice.md`: **bukan log asli.** Ditulis ulang setelah pengerjaan: arahan yang sama, dibuat lebih lengkap dan teknis, untuk dipakai ulang. Prompt saya di log asli pendek karena saya bekerja dengan instruksi dan aturan yang sudah saya siapkan untuk AI sebelumnya; versi ini menuliskan konteks itu secara eksplisit.
+Log prompt lengkap dikirim terpisah lewat email, tidak disimpan di repository ini.
